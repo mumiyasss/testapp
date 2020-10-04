@@ -54,12 +54,12 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
     private val vm by viewModels<MainViewModel>()
 
     private fun onGeoGet(location: Location) {
-//        vm.buildPagedList(location.latitude, location.longitude).observe(this) {
-//            adapter.submitList(it)
-//        }
-        vm.buildPagedList(40.7128, 74.0060).observe(this) {
+        vm.buildPagedList(location.latitude, location.longitude).observe(this) {
             adapter.submitList(it)
         }
+//        vm.buildPagedList(40.7128, 74.0060).observe(this) {
+//            adapter.submitList(it)
+//        }
     }
 
     private val locationRequest by lazy {
