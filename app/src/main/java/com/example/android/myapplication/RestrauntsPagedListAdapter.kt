@@ -14,7 +14,7 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_restraunt.*
 
 
-class RestrauntsPagedListAdapter(private var onItemClick: (Business) -> Unit
+class RestrauntsPagedListAdapter(
 ) : PagedListAdapter<Business, ViewHolder>(NotificationItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -27,7 +27,6 @@ class RestrauntsPagedListAdapter(private var onItemClick: (Business) -> Unit
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         getItem(position)?.let { notification ->
             holder.bind(notification)
-            holder.containerView.setOnClickListener { onItemClick(notification) }
         }
     }
 

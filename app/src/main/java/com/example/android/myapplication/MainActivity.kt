@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.apollographql.apollo.ApolloCall
@@ -35,47 +36,20 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        rv_restraunts.adapter = adapter
         handlePermission(PERMISSION_LOCATION) {
             getGeoLocation()
         }
     }
 
+    private val adapter = RestrauntsPagedListAdapter()
+    private val vm by viewModels<MainViewModel>()
 
     private fun onGeoGet(location: Location) {
-        val myQuery = SearchYelpQuery.builder()
-            .term("restaurants")
-            .sort_by("review_count")
-            .latitude(location.latitude)
-            .longitude(location.longitude)
-            .radius(10000.toDouble())
-            .build()
-
-        val client = NetworkService.getInstance()?.getApolloClientWithTokenInterceptor(token)
-
-        client
-            ?.query(myQuery)
-            ?.enqueue(object : ApolloCall.Callback<SearchYelpQuery.Data>() {
-                override fun onResponse(response: Response<SearchYelpQuery.Data>) {
-                    if (!response.hasErrors()) {
-                        response.data?.search()?.business()?.let {
-                            GlobalScope.launch(Dispatchers.Main) {
-
-                                rv_restraunts.adapter = RestrauntsAdapter(it)
-                            }
-                        }
-                    } else {
-                    }
-
-                }
-
-                override fun onFailure(e: ApolloException) {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        Toast.makeText(this@MainActivity, e.toString(), Toast.LENGTH_LONG).show()
-                    }
-                }
-            })
+        vm.buildPagedList(location.latitude, location.longitude).observe(this) {
+            adapter.submitList(it)
+        }
     }
-
 
     private val locationRequest by lazy {
         LocationRequest.create().apply {
