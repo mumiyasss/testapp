@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.apollographql.apollo.ApolloCall
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
 
     private fun onGeoGet(location: Location) {
         val myQuery = SearchYelpQuery.builder()
+            .term("restaurants")
+            .sort_by("review_count")
             .latitude(location.latitude)
             .longitude(location.longitude)
             .radius(10000.toDouble())
@@ -71,6 +74,21 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
         LocationServices.getFusedLocationProviderClient(this)
     }
 
+    private val locationCallback by lazy {
+        object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                if (locationResult == null) {
+                    return
+                }
+                for (location in locationResult.locations) {
+//                    userLocationLayer.setObjectListener(locationListener)
+                    onGeoGet(location)
+                }
+            }
+
+        }
+    }
+
     @SuppressLint("MissingPermission")
     private fun getGeoLocation() {
         val builder = LocationSettingsRequest.Builder()
@@ -80,9 +98,16 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
         task.addOnSuccessListener {
             fusedLocationClient.lastLocation
                 .addOnSuccessListener { location ->
-                    location?.let {
+                    if (location != null) {
                         onGeoGet(location)
+                    } else {
+                        fusedLocationClient.requestLocationUpdates(
+                            locationRequest,
+                            locationCallback,
+                            Looper.getMainLooper()
+                        )
                     }
+
                 }
         }
 
