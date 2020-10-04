@@ -8,6 +8,7 @@ import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.apollographql.apollo.ApolloCall
@@ -16,6 +17,9 @@ import com.apollographql.apollo.exception.ApolloException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), PermissionHandler {
 
@@ -54,12 +58,21 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
                 override fun onResponse(response: Response<SearchYelpQuery.Data>) {
                     if (!response.hasErrors()) {
                         response.data?.search()?.business()?.let {
-                            rv_restraunts.adapter = RestrauntsAdapter(it)
+                            GlobalScope.launch(Dispatchers.Main) {
+
+                                rv_restraunts.adapter = RestrauntsAdapter(it)
+                            }
                         }
+                    } else {
                     }
+
                 }
 
-                override fun onFailure(e: ApolloException) {}
+                override fun onFailure(e: ApolloException) {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        Toast.makeText(this@MainActivity, e.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
             })
     }
 

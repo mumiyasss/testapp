@@ -15,7 +15,7 @@ class NetworkService {
             .build()
 
         return ApolloClient.builder()
-            .serverUrl("https://api.yelp.com/v3/graphql/")
+            .serverUrl("https://api.yelp.com/v3/graphql")
             .okHttpClient(okHttp)
             .build()
     }
@@ -36,7 +36,7 @@ class NetworkService {
             .build()
 
         return ApolloClient.builder()
-            .serverUrl("https://api.yelp.com/v3/graphql/")
+            .serverUrl("https://api.yelp.com/v3/graphql")
             .okHttpClient(httpClient)
             .build()
     }
