@@ -3,7 +3,6 @@ query SearchYelp($radius: Float!, $latitude: Float!,$longitude: Float!,$offset:I
         total
         business {
             id
-
             name
             rating
             photos

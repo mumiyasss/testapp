@@ -48,11 +48,9 @@ class RestrauntsPagedListAdapter(
         fun bind(item: Business) {
             name.text = item.name()
             distance.text = "${item.distance()}m"
-//            Glide.with(containerView)
-////                .load()
-//////            .placeholder(R.drawable.ic_no_photo)
-//////            .apply(glideRequestOptions)
-////                .into(photo)
+            Glide.with(containerView)
+                .load(item.photos()?.firstOrNull())
+                .into(photo)
         }
 
     }
