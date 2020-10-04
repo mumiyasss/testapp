@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
@@ -37,6 +39,12 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
         setContentView(R.layout.activity_main)
 
         rv_restraunts.adapter = adapter
+        rv_restraunts?.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         handlePermission(PERMISSION_LOCATION) {
             getGeoLocation()
         }
@@ -46,7 +54,10 @@ class MainActivity : AppCompatActivity(), PermissionHandler {
     private val vm by viewModels<MainViewModel>()
 
     private fun onGeoGet(location: Location) {
-        vm.buildPagedList(location.latitude, location.longitude).observe(this) {
+//        vm.buildPagedList(location.latitude, location.longitude).observe(this) {
+//            adapter.submitList(it)
+//        }
+        vm.buildPagedList(40.7128, 74.0060).observe(this) {
             adapter.submitList(it)
         }
     }

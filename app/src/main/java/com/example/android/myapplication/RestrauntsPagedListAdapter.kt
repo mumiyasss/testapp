@@ -47,7 +47,7 @@ class RestrauntsPagedListAdapter(
 
         fun bind(item: Business) {
             name.text = item.name()
-            distance.text = "${item.distance()}m"
+            distance.text = "${item.distance()?.toInt()}m"
             Glide.with(containerView)
                 .load(item.photos()?.firstOrNull())
                 .into(photo)
